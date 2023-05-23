@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+
+<mapper namespace="cn.tedu.codeafterend.mapper.DeptMapper">
+    <!--        int insert(Dept dept); -->
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO hea_dept(
+        dept_name, dept_presentation
+        )
+        VALUES (
+        #{deptName},#{deptPresentation}
+        )
+    </insert>
+
+    <!--    int delete(Long id); -->
+    <delete id="delete">
+        DELETE FROM hea_dept WHERE id=#{id}
+    </delete>
+
+    <!--        int updateById(Dept dept); -->
+    <update id="updateById">
+        UPDATE hea_dept
+        <set>
+            <if test="deptName != null">
+                dept_name=#{deptName},
+            </if>
+            <if test="deptPresentation != null">
+                dept_presentation=#{deptPresentation},
+            </if>
+        </set>
+        where id=#{id}
+    </update>
+
+    <!--    int count(); -->
+    <select id="count" resultType="int">
+        SELECT count(*) FROM hea_dept
+    </select>
+
+    <!--    EmployeeDataStandardVO getStandardById(Long id); -->
+    <select id="getStandardById" resultType="cn.tedu.codeafterend.pojo.vo.DeptStandardVO">
+        SELECT
+        <include refid="ListQueryFields"/>
+        FROM hea_dept WHERE id=#{id}
+    </select>
+
+
+    <!--    int countName(String name); -->
+    <select id="countName" resultType="int">
+        SELECT count(*) FROM hea_dept where dept_name = #{deptName}
+    </select>
+
+    <!--    List<DeptStandardVO> list(); -->
+    <select id="list" resultMap="ListResultMap">
+        SELECT
+        <include refid="ListQueryFields"/>
+        FROM hea_dept
+    </select>
+
+
+    <sql id="ListQueryFields">
+        <if test="true">
+           id,dept_name, dept_presentation
+        </if>
+    </sql>
+
+    <resultMap id="ListResultMap" type="cn.tedu.codeafterend.pojo.vo.DeptStandardVO">
+        <id column="id" property="id"/>
+        <result column="dept_name" property="deptName"/>
+        <result column="dept_presentation" property="deptPresentation"/>
+    </resultMap>
+</mapper>

@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+
+<mapper namespace="cn.tedu.codeafterend.mapper.SalaryManagementMapper">
+    <!--       int insert(SalaryManagement salaryManagement);  -->
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO salary_management(
+        overtime_pay, payroll, labor_Insurance, national_health_insurance, actual_month,leave_deduction_amount, ` employee_id`
+        )
+        VALUES (
+        #{overtimePay},#{payroll},#{laborInsurance},#{nationalHealthInsurance},#{actualMonth},#{leaveDeductionAmount},#{employeeId}
+        )
+    </insert>
+
+<!--    &lt;!&ndash;    int delete(Long id); &ndash;&gt;-->
+<!--    <delete id="delete">-->
+<!--        DELETE FROM hea_dept WHERE id=#{id}-->
+<!--    </delete>-->
+
+<!--    &lt;!&ndash;        int updateById(Dept dept); &ndash;&gt;-->
+<!--    <update id="updateById">-->
+<!--        UPDATE hea_dept-->
+<!--        <set>-->
+<!--            <if test="deptName != null">-->
+<!--                dept_name=#{deptName},-->
+<!--            </if>-->
+<!--            <if test="deptPresentation != null">-->
+<!--                dept_presentation=#{deptPresentation},-->
+<!--            </if>-->
+<!--        </set>-->
+<!--        where id=#{id}-->
+<!--    </update>-->
+
+<!--    &lt;!&ndash;    int count(); &ndash;&gt;-->
+<!--    <select id="count" resultType="int">-->
+<!--        SELECT count(*) FROM hea_dept-->
+<!--    </select>-->
+
+<!--    &lt;!&ndash;    EmployeeDataStandardVO getStandardById(Long id); &ndash;&gt;-->
+<!--    <select id="getStandardById" resultType="cn.tedu.codeafterend.pojo.vo.DeptStandardVO">-->
+<!--        SELECT-->
+<!--        <include refid="ListQueryFields"/>-->
+<!--        FROM hea_dept WHERE id=#{id}-->
+<!--    </select>-->
+
+
+        <!--     int selectLastMonthData(String actualMonth); -->
+    <select id="selectLastMonthData"  resultType="int">
+        SELECT COUNT(*) FROM salary_management
+        WHERE actual_month = #{actualMonth}
+    </select>
+
+<!--    List<SalaryManagementStandardVO> list(String month); -->
+    <select id="list" resultMap="ListResultMap">
+        SELECT
+        <include refid="ListQueryFields"/>
+        FROM salary_management s join employee_data e on s.` employee_id` = e.id
+        where   actual_month = #{month}
+    </select>
+
+    <!--    List<SalaryManagementStandardVO>  getByMonthSelectList(String month) -->
+    <select id="getByMonthSelectList" resultMap="ListResultMap">
+        SELECT
+        <include refid="ListQueryFields"/>
+        FROM salary_management s join employee_data e on s.` employee_id` = e.id
+        where   actual_month = #{month}
+    </select>
+    <!--    List<SalaryManagementStandardVO> list(); -->
+<!--    <select id="list" resultMap="ListResultMap">-->
+<!--        SELECT-->
+<!--        *-->
+<!--        FROM salary_management-->
+<!--    </select>-->
+
+
+    <sql id="ListQueryFields">
+        <if test="true">
+           e.employee_name , overtime_pay, payroll, labor_Insurance, national_health_insurance,leave_deduction_amount, actual_month
+        </if>
+    </sql>
+
+    <resultMap id="ListResultMap" type="cn.tedu.codeafterend.pojo.vo.SalaryManagementStandardVO">
+        <id column="id" property="id"/>
+        <result column="employee_name" property="employeeName"/>
+        <result column="overtime_pay" property="overtimePay"/>
+        <result column="payroll" property="payroll"/>
+        <result column="labor_Insurance" property="laborInsurance"/>
+        <result column="national_health_insurance" property="nationalHealthInsurance"/>
+        <result column="leave_deduction_amount" property="leaveDeductionAmount"/>
+        <result column="actual_month" property="actualMonth"/>
+    </resultMap>
+</mapper>

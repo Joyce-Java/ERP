@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+
+<mapper namespace="cn.tedu.codeafterend.mapper.CodeNumberMapper">
+
+
+    <!--    CodeNumberStandardVO getStandardById(Long id); -->
+    <select id="getStandardById" resultType="cn.tedu.codeafterend.pojo.vo.CodeNumberStandardVO">
+        SELECT
+        <include refid="ListQueryFields"/>
+        FROM hea_code_number WHERE id=#{id}
+    </select>
+
+
+    <!--    List<CodeNumberStandardVO> list(); -->
+    <select id="list" resultMap="ListResultMap">
+        SELECT
+        <include refid="ListQueryFields"/>
+        FROM hea_code_number
+    </select>
+
+
+    <sql id="ListQueryFields">
+        <if test="true">
+           id,code_name
+        </if>
+    </sql>
+
+    <resultMap id="ListResultMap" type="cn.tedu.codeafterend.pojo.vo.CodeNumberStandardVO">
+        <id column="id" property="id"/>
+        <result column="code_name" property="codeName"/>
+    </resultMap>
+</mapper>

@@ -1,0 +1,173 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+
+<mapper namespace="cn.tedu.codeafterend.mapper.EmployeeDataMapper">
+    <!--    int insert(EmployeeData employeeData); -->
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO employee_data(
+        employee_name, gender, address,
+         id_number, phone_number,birthday,hiredate,
+        education_background,hea_dept_id)
+        VALUES (
+        #{employeeName},#{gender},#{address},#{idNumber},
+        #{phoneNumber},#{birthday},#{hiredate},#{educationBackground},#{heaDeptId}
+        )
+    </insert>
+
+    <!--    int delete(Long id); -->
+    <delete id="delete">
+        DELETE FROM employee_data WHERE id=#{id}
+    </delete>
+
+    <!--        int updateById(EmployeeData employeeData); -->
+    <update id="updateById">
+        UPDATE employee_data
+        <set>
+            <if test="employeeName != null">
+                employee_name=#{employeeName},
+            </if>
+            <if test="gender != null">
+                gender=#{gender},
+            </if>
+            <if test="address != null">
+                address=#{address},
+            </if>
+            <if test="idNumber != null">
+                id_number=#{idNumber},
+            </if>
+            <if test="birthday != null">
+                birthday=#{birthday},
+            </if>
+            <if test="phoneNumber != null">
+                phone_number=#{phoneNumber},
+            </if>
+            <if test="educationBackground != null">
+                education_background=#{educationBackground},
+            </if>
+            <if test="heaDeptId != null">
+                hea_dept_id=#{heaDeptId},
+            </if>
+            <if test="hiredate != null">
+                hiredate = #{hiredate},
+            </if>
+
+                quitdate = #{quitdate}
+
+        </set>
+        where id=#{id}
+    </update>
+
+    <!--    int count(); -->
+    <select id="count" resultType="int">
+        SELECT count(*) FROM employee_data
+    </select>
+
+    <!--    EmployeeDataStandardVO getStandardById(Long id); -->
+    <select id="getStandardById" resultMap="entityResultMap">
+        SELECT
+        <include refid="StandardById"/>
+        FROM employee_data e right join hea_dept d
+            on d.id = e.hea_dept_id
+         WHERE e.id= #{id}
+    </select>
+
+
+    <!--    int countName(String name); -->
+    <select id="countName" resultType="int">
+        SELECT count(*) FROM employee_data where employee_name = #{employeeName}
+    </select>
+
+
+<!--       List<EmployeeDataStandardVO> selectAllId();;-->
+    <select id="selectAllId" resultMap="ListResultMap">
+        SELECT employee_name,id,hiredate,quitdate FROM employee_data
+    </select>
+
+    <!--    List<EmployeeDataStandardVO> list(); -->
+    <select id="list" resultMap="ListResultMap">
+        SELECT
+        <include refid="ListQueryFields"/>
+        FROM employee_data data left join hea_dept dept on dept.id = data.hea_dept_id  where quitdate is null order by data.hea_dept_id
+    </select>
+
+    <!--    List<EmployeeDataStandardVO> listByQuitdate(); -->
+    <select id="listByQuitdate" resultMap="ListResultMap">
+        SELECT
+        <include refid="ListQueryFields"/>
+        FROM employee_data data left join hea_dept dept on dept.id = data.hea_dept_id  where quitdate is not null order by data.hea_dept_id
+    </select>
+
+
+    <!--    List<DeptStandardVO> selectDept(); -->
+    <select id="selectDept" resultMap="ListDeptResultMap">
+        SELECT
+        <include refid="ListDeptQueryFields"/>
+        FROM hea_dept
+    </select>
+
+
+    <sql id="ListDeptQueryFields">
+        <if test="true">
+            id,dept_name, dept_presentation
+        </if>
+    </sql>
+
+    <sql id="ListQueryFields">
+        <if test="true">
+            data.id, employee_name, dept.dept_name, gender,
+            address, id_number, birthday,hiredate,
+            phone_number,data.hea_dept_id, education_background,quitdate
+        </if>
+    </sql>
+
+    <sql id="StandardById">
+        <if test="true">
+            e.id,employee_name,d.dept_name,gender,
+            address, id_number, birthday,hiredate,
+            phone_number, education_background,hea_dept_id
+        </if>
+    </sql>
+
+
+    <resultMap id="ListResultMap" type="cn.tedu.codeafterend.pojo.vo.EmployeeDataStandardVO">
+        <id column="id" property="id"/>
+        <result column="employee_name" property="employeeName"/>
+        <result column="dept_Name" property="deptName"/>
+        <result column="gender" property="gender"/>
+        <result column="address" property="address"/>
+        <result column="id_number" property="idNumber"/>
+        <result column="birthday" property="birthday"/>
+        <result column="hiredate" property="hiredate"/>
+        <result column="quitdate" property="quitdate"/>
+        <result column="phone_number" property="phoneNumber"/>
+        <result column="education_background" property="educationBackground"/>
+        <result column="input_data" property="inputData"/>
+        <result column="hea_dept_id" property="heaDeptId"/>
+    </resultMap>
+
+    <resultMap id="entityResultMap" type="cn.tedu.codeafterend.pojo.vo.EmployeeDataStandardVO">
+        <id column="id" property="id"/>
+        <result column="employee_name" property="employeeName"/>
+        <result column="dept_Name" property="deptName"/>
+        <result column="gender" property="gender"/>
+        <result column="address" property="address"/>
+        <result column="id_number" property="idNumber"/>
+        <result column="birthday" property="birthday"/>
+        <result column="hiredate" property="hiredate"/>
+        <result column="quitdate" property="quitdate"/>
+        <result column="phone_number" property="phoneNumber"/>
+        <result column="education_background" property="educationBackground"/>
+        <result column="input_data" property="inputData"/>
+        <result column="hea_dept_id" property="heaDeptId"/>
+    </resultMap>
+
+    <resultMap id="ListDeptResultMap" type="cn.tedu.codeafterend.pojo.vo.DeptStandardVO">
+        <id column="id" property="id"/>
+        <result column="dept_name" property="deptName"/>
+        <result column="dept_presentation" property="deptPresentation"/>
+    </resultMap>
+
+
+</mapper>

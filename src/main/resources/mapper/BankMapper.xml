@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+
+<mapper namespace="cn.tedu.codeafterend.mapper.BankMapper">
+    <!--        int insert(Bank bank); -->
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO hea_bank
+            (code_name, salary, bank_Number,labor_Insurance,national_health_insurance, employee_id)
+        VALUES (
+                #{codeName},#{salary},#{bankNumber},#{laborInsurance},#{nationalHealthInsurance},#{employeeId}
+                )
+    </insert>
+
+    <!--    int delete(Long id); -->
+    <delete id="delete">
+        DELETE FROM hea_bank WHERE id=#{id}
+    </delete>
+
+    <!--    int deleteByEmployee(Long id); -->
+    <delete id="deleteByEmployee">
+        DELETE FROM hea_bank WHERE employee_id=#{id}
+    </delete>
+
+    <!--        int updateById(Bank bank); -->
+    <update id="updateById">
+        UPDATE hea_bank
+        <set>
+            <if test="codeName != null">
+                code_name=#{codeName},
+            </if>
+            <if test="salary != null">
+                salary=#{salary},
+            </if>
+            <if test="bankNumber != null">
+                bank_Number=#{bankNumber},
+            </if>
+            <if test="employeeId != null">
+                employee_id=#{employeeId},
+            </if>
+        </set>
+        where id=#{id}
+    </update>
+
+    <!--    int count(); -->
+    <select id="count" resultType="int">
+        SELECT count(*) FROM hea_bank
+    </select>
+
+    <!--    EmployeeDataStandardVO getStandardById(Long id); -->
+    <select id="getStandardById" resultMap="ListResultMap">
+        SELECT
+        <include refid="StandardFields"/>
+        FROM hea_bank WHERE employee_id=#{id}
+    </select>
+
+
+
+    <!--    int countName(String name); -->
+    <select id="countName" resultType="int">
+        SELECT count(*) FROM hea_bank where employee_id = #{employeeId}
+    </select>
+
+    <!--    List<DeptStandardVO> list(); -->
+    <select id="list" resultMap="ListResultMap">
+        SELECT
+        <include refid="ListQueryFields"/>
+        FROM hea_bank bank
+             left join employee_data data
+             on bank.employee_id = data.id
+             left join hea_code_number number
+             on bank.code_name=number.id
+    </select>
+
+
+    <sql id="ListQueryFields">
+        <if test="true">
+           bank.id,number.code_name, salary, bank_Number,data.employee_name
+        </if>
+    </sql>
+
+    <sql id="StandardFields">
+        <if test="true">
+           id,code_name, salary, bank_Number, labor_Insurance,national_health_insurance,employee_id
+        </if>
+    </sql>
+
+    <resultMap id="ListResultMap" type="cn.tedu.codeafterend.pojo.vo.BankStandardVO">
+        <id column="id" property="id"/>
+        <result column="code_name" property="codeName"/>
+        <result column="salary" property="salary"/>
+        <result column="bank_Number" property="bankNumber"/>
+        <result column="labor_Insurance" property="laborInsurance"/>
+        <result column="national_health_insurance" property="nationalHealthInsurance"/>
+        <result column="employee_id" property="employeeId"/>
+        <result column="employee_name" property="employeeName"/>
+    </resultMap>
+</mapper>

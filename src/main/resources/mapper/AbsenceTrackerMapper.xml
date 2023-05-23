@@ -1,0 +1,179 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+
+<mapper namespace="cn.tedu.codeafterend.mapper.AbsenceTrackerMapper">
+        <!--       int insert(AbsenceTracker absenceTracker);       -->
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO absence_tracker
+            (personal_leave, menstrual_leave, sick_leave, maternity_leave,paternity_leave,marriage_leave,bereavement_leave,family_care_leave
+            ,paternity_leave_for_childcare,hospital_care_leave,start_time,end_time,employee_id
+            )
+        VALUES (
+             #{personalLeave},#{menstrualLeave},#{sickLeave},#{maternityLeave},#{paternityLeave},#{marriageLeave},#{bereavementLeave},#{familyCareLeave}
+                ,#{paternityLeaveForChildcare},#{hospitalCareLeave},#{startTime},#{endTime},#{employeeId}
+               )
+
+    </insert>
+    <!--  int deleteById(Long id);  -->
+    <delete id="deleteById">
+        DELETE FROM absence_tracker WHERE id=#{id}
+    </delete>
+
+    <!--    int deleteByEmployee(Long id); -->
+    <delete id="deleteByEmployee">
+        DELETE FROM absence_tracker WHERE employee_id=#{id}
+    </delete>
+
+    <update id="updateById">
+        UPDATE absence_tracker
+        <set>
+
+                personal_leave=#{personalLeave},
+
+                menstrual_leave=#{menstrualLeave},
+
+                sick_leave=#{sickLeave},
+
+                maternity_leave=#{maternityLeave},
+
+                paternity_leave=#{paternityLeave},
+
+                marriage_leave=#{marriageLeave},
+
+                bereavement_leave=#{bereavementLeave},
+
+                family_care_leave=#{familyCareLeave},
+
+
+                paternity_leave_for_childcare = #{paternityLeaveForChildcare},
+
+
+                hospital_care_leave = #{hospitalCareLeave},
+
+
+
+            <if test="startTime != null">
+                start_time = #{startTime},
+            </if>
+            <if test="endTime != null">
+                end_time = #{endTime},
+            </if>
+        </set>
+        where id=#{id}
+    </update>
+
+    <!--    List<AbsenceTrackerVO> list();    -->
+    <select id="list" resultMap="ListResultMap">
+        SELECT
+        <include refid="ListQueryFields"/>
+        FROM absence_tracker t join employee_data e on t.employee_id = e.id where  DATE_FORMAT(t.start_time, '%Y-%m') = DATE_FORMAT(NOW(), '%Y-%m')
+    </select>
+
+    <!--    AbsenceTrackerVO getStandardById(id);    -->
+    <select id="getStandardById" resultMap="ListResultMap">
+        SELECT
+        <include refid="ListQueryFields"/>
+        FROM absence_tracker t join employee_data e on t.Employee_id = e.id WHERE t.id=#{id}
+    </select>
+
+    <!--  List<AbsenceTrackerVO>  getAllById(Long id);  -->
+    <select id="getAllById" resultMap="ListResultMap">
+        SELECT
+        <include refid="ListQueryFields"/>
+        FROM absence_tracker
+        t join employee_data e on t.Employee_id = e.id
+        where t.Employee_id = #{id}
+        <if test="month != null">
+            AND  DATE_FORMAT(start_time, '%Y-%m') = #{month}
+        </if>
+    </select>
+
+    <!--    List<AbsenceTrackerVO>  getByMonthSelectList(String month)-->
+    <select id="getByMonthSelectList" resultMap="ListResultMap">
+        SELECT
+        <include refid="ListQueryFields"/>
+        FROM absence_tracker t join employee_data e on t.employee_id = e.id
+        where   DATE_FORMAT(start_time, '%Y-%m') = #{month}
+    </select>
+
+
+    <!--   AbsenceTrackerVO  getByAbsenceTrackerCalculate(Long id) -->
+    <select id="getByAbsenceTrackerCalculate" resultMap="ListResultMap">
+        SELECT t.id,
+               e.employee_name,
+               SUM(personal_leave)  personal_leave,
+               SUM(menstrual_leave) menstrual_leave,
+               SUM(sick_leave) sick_leave,
+               SUM(maternity_leave) maternity_leave,
+               SUM(paternity_leave) paternity_leave,
+               SUM(marriage_leave) marriage_leave,
+               SUM(bereavement_leave) bereavement_leave,
+               SUM(family_care_leave) family_care_leave,
+               SUM(paternity_leave_for_childcare) paternity_leave_for_childcare,
+               SUM(hospital_care_leave) hospital_care_leave
+        FROM absence_tracker t
+                 left join employee_data e on t.employee_id = e.id
+        WHERE DATE_FORMAT(start_time, '%Y-%m') =
+              DATE_FORMAT(DATE_SUB(NOW(), INTERVAL 1 MONTH)
+                  , '%Y-%m')
+          and employee_id = #{id};
+    </select>
+
+    <!--    List<EmployeeDataStandardVO> selectEmployees(); -->
+    <select id="selectEmployees" resultMap="ListEmployeesResultMap">
+        SELECT
+        <include refid="ListEmployeesQueryFields"/>
+        FROM employee_data data left join hea_dept dept on dept.id = data.hea_dept_id  where quitdate is null order by data.hea_dept_id
+    </select>
+
+    <sql id="ListEmployeesQueryFields">
+        <if test="true">
+            data.id, employee_name, dept.dept_name, gender,
+            address, id_number, birthday,hiredate,
+            phone_number, education_background
+        </if>
+    </sql>
+
+    <sql id="ListQueryFields">
+        <if test="true">
+            t.id,e.employee_name,personal_leave, menstrual_leave, sick_leave, maternity_leave,paternity_leave,marriage_leave,bereavement_leave,family_care_leave
+            ,paternity_leave_for_childcare,hospital_care_leave,start_time,end_time,employee_id
+        </if>
+    </sql>
+
+    <resultMap id="ListResultMap" type="cn.tedu.codeafterend.pojo.vo.AbsenceTrackerVO">
+        <id column="id" property="id"/>
+        <result column="personal_leave" property="personalLeave"/>
+        <result column="menstrual_leave" property="menstrualLeave"/>
+        <result column="sick_leave" property="sickLeave"/>
+        <result column="maternity_leave" property="maternityLeave"/>
+        <result column="paternity_leave" property="paternityLeave"/>
+        <result column="marriage_leave" property="marriageLeave"/>
+        <result column="bereavement_leave" property="bereavementLeave"/>
+        <result column="family_care_leave" property="familyCareLeave"/>
+        <result column="paternity_leave_for_childcare" property="paternityLeaveForChildcare"/>
+        <result column="hospital_care_leave" property="hospitalCareLeave"/>
+        <result column="start_time" property="startTime"/>
+        <result column="end_time" property="endTime"/>
+        <result column="employee_name" property="employeeName"/>
+        <result column="employee_id" property="employeeId"/>
+    </resultMap>
+
+    <resultMap id="ListEmployeesResultMap" type="cn.tedu.codeafterend.pojo.vo.EmployeeDataStandardVO">
+        <id column="id" property="id"/>
+        <result column="employee_name" property="employeeName"/>
+        <result column="dept_Name" property="deptName"/>
+        <result column="gender" property="gender"/>
+        <result column="address" property="address"/>
+        <result column="id_number" property="idNumber"/>
+        <result column="birthday" property="birthday"/>
+        <result column="hiredate" property="hiredate"/>
+        <result column="phone_number" property="phoneNumber"/>
+        <result column="education_background" property="educationBackground"/>
+        <result column="input_data" property="inputData"/>
+        <result column="hea_dept_id" property="heaDeptId"/>
+    </resultMap>
+
+</mapper>
