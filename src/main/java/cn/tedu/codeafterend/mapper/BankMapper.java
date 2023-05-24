@@ -51,12 +51,13 @@ public interface BankMapper {
     BankStandardVO getStandardById(Long id);
 
     /**
-     * 查詢部門名是否重複
+     * 查詢銀行名是否重複
      *
      * @param employeeId 傳入需要比對的名稱
      * @return 返回受查詢到的筆數
      */
     int countName(Long employeeId);
+
     /**
      * 關聯查詢現有員工名稱
      *
@@ -65,11 +66,17 @@ public interface BankMapper {
     List<EmployeeDataStandardVO> getEmployeeName();
 
     /**
-     * 查詢部門資料列表
+     * 查詢銀行資料列表
      *
      * @return 返回查詢的列表
      */
     List<BankStandardVO> list();
 
+    /**
+     * 根據員工id刪除對應資料
+     *
+     * @param id 員工id
+     * @return 返回刪除的筆數
+     */
     int deleteByEmployee(Long id);
 }

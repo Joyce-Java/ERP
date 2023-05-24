@@ -13,19 +13,22 @@ import java.util.List;
 public interface IBankService {
     /**
      * 添加銀行資料
+     *
      * @param deptAddNewDTO 封裝添加部門的數據
      */
     void addNew(BankAddNewDTO deptAddNewDTO);
 
     /**
      * 根據id刪除資料
-     * @param id
+     *
+     * @param id 資料id
      */
     void deleteById(Long id);
 
     /**
-     * 銀行資料列表
-     * @return
+     * 員工帳戶資料列表
+     *
+     * @return 返回相關資料
      */
     List<BankStandardVO> list();
 }
