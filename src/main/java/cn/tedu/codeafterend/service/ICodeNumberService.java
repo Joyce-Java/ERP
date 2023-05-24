@@ -11,6 +11,10 @@ import java.util.List;
 @Transactional
 public interface ICodeNumberService {
 
-
+    /**
+     * 查詢銀行代號資料列表
+     *
+     * @return 返回查詢的列表
+     */
     List<CodeNumberStandardVO> list();
 }

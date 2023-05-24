@@ -10,9 +10,6 @@ import java.util.List;
 @Repository
 public interface CodeNumberMapper {
 
-
-
-
     /**
      * 根據id標準查詢
      *
