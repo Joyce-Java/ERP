@@ -10,6 +10,7 @@ import java.util.List;
 
 @Repository
 public interface DeptMapper {
+
     /**
      * 插入部門資料
      *
