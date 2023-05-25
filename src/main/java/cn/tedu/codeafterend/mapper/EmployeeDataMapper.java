@@ -10,6 +10,7 @@ import java.util.List;
 
 @Repository
 public interface EmployeeDataMapper {
+
     /**
      * 插入員工資料
      *
@@ -41,8 +42,6 @@ public interface EmployeeDataMapper {
      */
     int count();
 
-
-
     /**
      * 根據id標準查詢
      *
@@ -55,7 +54,7 @@ public interface EmployeeDataMapper {
      * 查詢用戶名是否重複
      *
      * @param name 傳入需要比對的用戶名
-     * @return
+     * @return 查詢的筆數
      */
     int countName(String name);
 
@@ -66,10 +65,25 @@ public interface EmployeeDataMapper {
      */
     List<EmployeeDataStandardVO> list();
 
+    /**
+     * 查出所有員工的ID
+     *
+     * @return 員工ID的列表
+     */
     List<EmployeeDataStandardVO> selectAllId();
 
+    /**
+     * 查詢部門列表
+     *
+     * @return 返回部門列表
+     */
     List<DeptStandardVO> selectDept();
 
+    /**
+     * 根據離職員工查出列表
+     *
+     * @return 返回離職員工列表
+     */
     List<EmployeeDataStandardVO> listByQuitdate();
 
 }
