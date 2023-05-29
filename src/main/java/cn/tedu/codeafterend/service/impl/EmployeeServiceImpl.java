@@ -47,12 +47,15 @@ public class EmployeeServiceImpl implements IEmployeeDataService {
             throw new ServiceException(ServiceCode.ERR_CONFLICT, massage);
         }
 
-
-
         EmployeeData employeeData = new EmployeeData();
         BeanUtils.copyProperties(employeeDataAddNewDTO, employeeData);
 
         int insert = employeeDataMapper.insert(employeeData);
+        if (insert != 1 ){
+            String message = "添加失敗，伺服器繁忙，請稍後再嘗試。";
+            log.debug(message);
+            throw new ServiceException(ServiceCode.ERR_INSERT,message);
+        }
 
     }
 
@@ -81,7 +84,6 @@ public class EmployeeServiceImpl implements IEmployeeDataService {
     public List<EmployeeDataStandardVO> list() {
         log.debug("開始處理【查詢員工列表】業務");
 
-
         return employeeDataMapper.list();
     }
 
@@ -94,16 +96,11 @@ public class EmployeeServiceImpl implements IEmployeeDataService {
 
     @Override
     public void update(EmployeeDataAddNewDTO employeeDataAddNewDTO) {
-
-
         EmployeeData employeeData = new EmployeeData();
         BeanUtils.copyProperties(employeeDataAddNewDTO,employeeData);
 
-
-
         int row = employeeDataMapper.updateById(employeeData);
 
-        //TODO 驗證
         if (row < 1) {
             String message = "修改失敗，伺服器繁忙，請稍後再嘗試。";
             log.debug(message);
